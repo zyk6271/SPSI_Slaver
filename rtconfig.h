@@ -222,6 +222,11 @@
 
 /* peripheral libraries and drivers */
 
+#define PKG_USING_AGILE_LED
+#define PKG_AGILE_LED_DEBUG
+#define PKG_AGILE_LED_THREAD_STACK_SIZE 256
+#define PKG_AGILE_LED_THREAD_PRIORITY 28
+#define PKG_USING_AGILE_LED_LATEST_VERSION
 /* end of peripheral libraries and drivers */
 
 /* AI packages */

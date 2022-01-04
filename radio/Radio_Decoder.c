@@ -20,48 +20,77 @@
 #include "Radio_Drv.h"
 
 #define DBG_TAG "RF_DE"
-#define DBG_LVL DBG_INFO
+#define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
-uint8_t Learn_Flag=1;
-uint32_t Main_ID = 0;
-extern uint32_t Self_Id;
-extern int ubRssi;
+extern uint32_t Self_ID;
+extern uint32_t Target_ID;
 
-void NormalSolve(uint8_t *rx_buffer,uint8_t rx_len)
+void Solve_433(uint8_t *rx_buffer,uint8_t rx_len)
 {
     Message Rx_message;
-    if(rx_buffer[rx_len-1]==0x0A&&rx_buffer[rx_len-2]==0x0D)
+    if(rx_buffer[rx_len-1]=='M')
      {
-         sscanf((const char *)&rx_buffer[1],"{%ld,%ld,%d,%d,%d}",&Rx_message.Target_ID,&Rx_message.From_ID,&Rx_message.Counter,&Rx_message.Command,&Rx_message.Data);
-         if(Rx_message.Target_ID==Self_Id)
+         sscanf((const char *)&rx_buffer[1],"M{%ld,%ld,%d,%d,%d}M",&Rx_message.Target_ID,&Rx_message.From_ID,&Rx_message.Counter,&Rx_message.Command,&Rx_message.Data);
+         if(Rx_message.Target_ID==Self_ID && Rx_message.From_ID==Target_ID)
          {
-             LOG_D("NormalSolve verify ok\r\n");
+             LOG_I("NormalSolve verify ok\r\n");
              switch(Rx_message.Command)
              {
-             case 1://学习
+             case 0://心跳
+                 rf_433_Enqueue(Rx_message.From_ID,0,1);
+                 break;
+             case 1://PSI
+                 //打开关闭PSI
+                 break;
+             case 2://暂停
+                 //暂停30s定时器
                  break;
              }
          }
      }
 }
-void rf433_rx_callback(uint8_t *rx_buffer,uint8_t rx_len)
+void Solve_4068(uint8_t *rx_buffer,uint8_t rx_len)
 {
-    LOG_I("RX 433 is %s\r\n",rx_buffer);
+    Message Rx_message;
+    if(rx_buffer[rx_len-1]=='M')
+     {
+         sscanf((const char *)&rx_buffer[1],"M{%ld,%ld,%d,%d,%d}M",&Rx_message.Target_ID,&Rx_message.From_ID,&Rx_message.Counter,&Rx_message.Command,&Rx_message.Data);
+         if(Rx_message.Target_ID==Self_ID && Rx_message.From_ID==Target_ID)
+         {
+             LOG_I("NormalSolve verify ok\r\n");
+             switch(Rx_message.Command)
+             {
+             case 0://心跳
+                 rf_4068_Enqueue(Rx_message.From_ID,0,1);
+                 break;
+             case 1://PSI
+                 //打开关闭PSI
+                 break;
+             case 2://暂停
+                 //暂停30s定时器
+                 break;
+             }
+         }
+     }
+}
+void rf433_rx_callback(int rssi,uint8_t *rx_buffer,uint8_t rx_len)
+{
+    LOG_D("RX 433 is %s,RSSI is %d\r\n",rx_buffer,rssi);
     switch(rx_buffer[1])
     {
-    case 'A':
-        NormalSolve(rx_buffer,rx_len);
+    case 'M':
+        Solve_433(rx_buffer,rx_len-1);
         break;
     }
 }
-void rf4068_rx_callback(uint8_t *rx_buffer,uint8_t rx_len)
+void rf4068_rx_callback(int rssi,uint8_t *rx_buffer,uint8_t rx_len)
 {
-    LOG_I("RX 4068 is %s\r\n",rx_buffer);
+    LOG_D("RX 4068 is %s,RSSI is %d\r\n",rx_buffer,rssi);
     switch(rx_buffer[1])
     {
-    case 'A':
-        NormalSolve(rx_buffer,rx_len);
+    case 'M':
+        Solve_4068(rx_buffer,rx_len-1);
         break;
     }
 }

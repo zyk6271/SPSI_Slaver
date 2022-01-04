@@ -9,6 +9,7 @@
  */
 
 #include <rtthread.h>
+#include <stdint.h>
 #include "little.h"
 #include "file.h"
 
@@ -20,6 +21,10 @@ int main(void)
 {
     flash_Init();
     ID_Init();
+    rf_433_start();
+    rf_4068_start();
+    RadioQueueInit();
+    //led_Init();
     while (1)
     {
         rt_thread_mdelay(1000);
