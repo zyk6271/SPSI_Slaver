@@ -39,7 +39,7 @@
 /**
  * @}
  */
-#define PKG_AGILE_LED_USING_THREAD_AUTO_INIT
+
 /** @defgroup AGILE_LED_Private_Macros Agile Led Private Macros
  * @{
  */
@@ -49,7 +49,6 @@
  * @}
  */
 
-#ifdef PKG_AGILE_LED_USING_THREAD_AUTO_INIT
 
 /** @defgroup AGILE_LED_Thread_Auto_Init Agile Led Thread Auto Init
  * @{
@@ -81,7 +80,6 @@
  * @}
  */
 
-#endif /* PKG_AGILE_LED_USING_THREAD_AUTO_INIT */
 
 /** @defgroup AGILE_LED_Private_Variables Agile Led Private Variables
  * @{
@@ -91,10 +89,8 @@ static rt_slist_t _slist_head = RT_SLIST_OBJECT_INIT(_slist_head); /**< Agile Le
 static struct rt_mutex _mtx;                                       /**< Agile Led 互斥锁 */
 static uint8_t _is_init = 0;                                       /**< Agile Led 初始化完成标志 */
 
-#ifdef PKG_AGILE_LED_USING_THREAD_AUTO_INIT
 static struct rt_thread _thread;                                   /**< Agile Led 线程控制块 */
 static uint8_t _thread_stack[PKG_AGILE_LED_THREAD_STACK_SIZE];     /**< Agile Led 线程堆栈 */
-#endif
 /**
  * @}
  */
@@ -499,14 +495,15 @@ void agile_led_process(void)
                     goto __repeat;
                 }
                 if (led->arr_index % 2) {
-                    agile_led_off(led);
-                } else {
                     agile_led_on(led);
+                } else {
+                    agile_led_off(led);
+
                 }
                 led->tick_timeout = rt_tick_get() + rt_tick_from_millisecond(led->light_arr[led->arr_index]);
                 led->arr_index++;
             } else {
-                led->arr_index = 0;
+                led->arr_index = 1;
                 if (led->loop_cnt > 0)
                     led->loop_cnt--;
             }
@@ -534,7 +531,6 @@ void agile_led_env_init(void)
  * @}
  */
 
-#ifdef PKG_AGILE_LED_USING_THREAD_AUTO_INIT
 
 /** @addtogroup AGILE_LED_Thread_Auto_Init
  * @{
@@ -579,13 +575,3 @@ static int agile_led_auto_thread_init(void)
     return RT_EOK;
 }
 INIT_APP_EXPORT(agile_led_auto_thread_init);
-
-/**
- * @}
- */
-
-/**
- * @}
- */
-
-#endif /* PKG_AGILE_LED_USING_THREAD_AUTO_INIT */

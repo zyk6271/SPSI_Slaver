@@ -1,18 +1,8 @@
 [
  {
-  "path": "/packages/tools/EasyFlash", 
-  "ver": "v4.1.0", 
-  "name": "EASYFLASH"
- }, 
- {
-  "path": "/packages/system/fal", 
-  "ver": "v0.5.0", 
-  "name": "FAL"
- }, 
- {
-  "path": "/packages/system/littlefs", 
+  "path": "/packages/system/syswatch", 
   "ver": "latest", 
-  "name": "LITTLEFS"
+  "name": "SYSWATCH"
  }, 
  {
   "path": "/packages/peripherals/agile_led", 

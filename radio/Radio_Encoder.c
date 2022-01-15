@@ -17,7 +17,7 @@
 #include "Radio_Common.h"
 
 #define DBG_TAG "RF_EN"
-#define DBG_LVL DBG_LOG
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 rt_thread_t Radio_Queue433 = RT_NULL;
@@ -149,6 +149,7 @@ void RadioQueueInit(void)
 //    }
     Self_ID = Default_Self_ID;
     Target_ID = Default_Target_ID;
+    LOG_W("Slave now,Self_ID %ld,Target_ID %ld\r\n",Self_ID,Target_ID);
     Radio_Queue433 = rt_thread_create("Radio_Queue433", rf_433_Dequeue, RT_NULL, 1024, 10, 10);
     if(Radio_Queue433)rt_thread_startup(Radio_Queue433);
     Radio_Queue4068 = rt_thread_create("Radio_Queue4068", rf_4068_Dequeue, RT_NULL, 1024, 10, 10);

@@ -12,10 +12,6 @@
 
 #include "stdint.h"
 
-void led_rf433_start(uint8_t mode);
-void led_rf433_stop(void);
-void led_rf4068_start(uint8_t mode);
-void led_rf4068_stop(void);
 void beep_start(uint8_t select);
 void beep_stop(void);
 void beep_calc(uint8_t level_4068,uint8_t level_433);

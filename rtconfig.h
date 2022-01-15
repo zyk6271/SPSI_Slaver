@@ -85,12 +85,6 @@
 
 /* Device virtual file system */
 
-#define RT_USING_DFS
-#define DFS_USING_WORKDIR
-#define DFS_FILESYSTEMS_MAX 4
-#define DFS_FILESYSTEM_TYPES_MAX 4
-#define DFS_FD_MAX 16
-#define RT_USING_DFS_DEVFS
 /* end of Device virtual file system */
 
 /* Device Drivers */
@@ -103,10 +97,7 @@
 #define RT_USING_PIN
 #define RT_USING_MTD_NOR
 #define RT_USING_SPI
-#define RT_USING_SFUD
-#define RT_SFUD_USING_SFDP
-#define RT_SFUD_USING_FLASH_INFO_TABLE
-#define RT_SFUD_SPI_MAX_HZ 50000000
+#define RT_USING_WDT
 
 /* Using USB */
 
@@ -144,8 +135,6 @@
 
 /* Utilities */
 
-#define RT_USING_RYM
-#define YMODEM_USING_FILE_TRANSFER
 /* end of Utilities */
 /* end of RT-Thread Components */
 
@@ -184,36 +173,22 @@
 
 /* tools packages */
 
-#define PKG_USING_EASYFLASH
-#define PKG_EASYFLASH_ENV
-#define PKG_EASYFLASH_ERASE_GRAN 4096
-#define PKG_EASYFLASH_WRITE_GRAN_1BIT
-#define PKG_EASYFLASH_WRITE_GRAN 1
-#define PKG_EASYFLASH_START_ADDR 0
-#define PKG_EASYFLASH_DEBUG
-#define PKG_USING_EASYFLASH_V410
-#define PKG_EASYFLASH_VER_NUM 0x40100
 /* end of tools packages */
 
 /* system packages */
 
-#define PKG_USING_FAL
-#define FAL_DEBUG_CONFIG
-#define FAL_DEBUG 1
-#define FAL_PART_HAS_TABLE_CFG
-#define FAL_USING_SFUD_PORT
-#define FAL_USING_NOR_FLASH_DEV_NAME "norflash0"
-#define PKG_USING_FAL_V00500
-#define PKG_FAL_VER_NUM 0x00500
-#define PKG_USING_LITTLEFS
-#define PKG_USING_LITTLEFS_LATEST_VERSION
-#define LFS_READ_SIZE 256
-#define LFS_PROG_SIZE 256
-#define LFS_BLOCK_SIZE 4096
-#define LFS_CACHE_SIZE 256
-#define LFS_BLOCK_CYCLES -1
-#define LFS_THREADSAFE
-#define LFS_LOOKAHEAD_MAX 128
+#define PKG_USING_SYSWATCH
+#define SYSWATCH_EXCEPT_RESOLVE_MODE_2
+#define SYSWATCH_EXCEPT_RESOLVE_MODE 2
+#define SYSWATCH_EXCEPT_TIMEOUT 60
+#define SYSWATCH_EXCEPT_CONFIRM_TMO 15
+#define SYSWATCH_EXCEPT_RESUME_DLY 15
+#define SYSWATCH_THREAD_PRIO 0
+#define SYSWATCH_THREAD_STK_SIZE 512
+#define SYSWATCH_THREAD_NAME "syswatch"
+#define SYSWATCH_WDT_NAME "wdt"
+#define SYSWATCH_WDT_TIMEOUT 5
+#define PKG_USING_SYSWATCH_LATEST_VERSION
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
@@ -223,9 +198,8 @@
 /* peripheral libraries and drivers */
 
 #define PKG_USING_AGILE_LED
-#define PKG_AGILE_LED_DEBUG
-#define PKG_AGILE_LED_THREAD_STACK_SIZE 256
-#define PKG_AGILE_LED_THREAD_PRIORITY 28
+#define PKG_AGILE_LED_THREAD_STACK_SIZE 1024
+#define PKG_AGILE_LED_THREAD_PRIORITY 15
 #define PKG_USING_AGILE_LED_LATEST_VERSION
 /* end of peripheral libraries and drivers */
 
