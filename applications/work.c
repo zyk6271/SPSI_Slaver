@@ -98,8 +98,6 @@ void work_callback(void *parameter)
 {
     rt_pin_mode(RELAY, PIN_MODE_OUTPUT);
     valve_control(0);
-    rf_433_Enqueue(Target_ID,3,0);
-    rf_4068_Enqueue(Target_ID,3,0);
     while(1)
     {
         if(rt_sem_take(valve_sem,RT_WAITING_FOREVER) == RT_EOK)
