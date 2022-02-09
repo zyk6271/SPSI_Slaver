@@ -33,6 +33,7 @@ void Solve_433(uint8_t *rx_buffer,uint8_t rx_len)
          sscanf((const char *)&rx_buffer[1],"M{%ld,%ld,%d,%d}M",&Rx_message.Target_ID,&Rx_message.From_ID,&Rx_message.Command,&Rx_message.Data);
          if(Rx_message.Target_ID==Self_ID && Rx_message.From_ID==Target_ID)
          {
+             remote_control(Rx_message.Data);
              switch(Rx_message.Command)
              {
              case 0://心跳
@@ -45,11 +46,10 @@ void Solve_433(uint8_t *rx_buffer,uint8_t rx_len)
              case 2://Control
                  rf_433_Enqueue(Rx_message.From_ID,2,Rx_message.Data);
                  break;
-             case 3://
-                 rf_433_Enqueue(Rx_message.From_ID,2,Rx_message.Data);
+             case 3://File
+                 long_heart();
                  break;
              }
-             remote_control(Rx_message.Data);
          }
      }
 }
@@ -61,6 +61,7 @@ void Solve_4068(uint8_t *rx_buffer,uint8_t rx_len)
          sscanf((const char *)&rx_buffer[1],"M{%ld,%ld,%d,%d}M",&Rx_message.Target_ID,&Rx_message.From_ID,&Rx_message.Command,&Rx_message.Data);
          if(Rx_message.Target_ID==Self_ID && Rx_message.From_ID==Target_ID)
          {
+             remote_control(Rx_message.Data);
              switch(Rx_message.Command)
              {
              case 0://心跳
@@ -73,11 +74,10 @@ void Solve_4068(uint8_t *rx_buffer,uint8_t rx_len)
              case 2://Control
                  rf_4068_Enqueue(Rx_message.From_ID,2,Rx_message.Data);
                  break;
-             case 3:
-                 rf_4068_Enqueue(Rx_message.From_ID,2,Rx_message.Data);
+             case 3://File
+                 long_heart();
                  break;
              }
-             remote_control(Rx_message.Data);
          }
      }
 }
