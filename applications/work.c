@@ -85,7 +85,7 @@ void long_heart(void)
 void work_callback(void *parameter)
 {
     rt_pin_mode(RELAY, PIN_MODE_OUTPUT);
-    valve_control(0);
+    rt_pin_write(RELAY,0);
     while(1)
     {
         if(rt_sem_take(valve_sem,RT_WAITING_FOREVER) == RT_EOK)
