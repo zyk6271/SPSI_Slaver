@@ -24,15 +24,23 @@
 
 uint8_t axradio_get_pllvcoi(struct ax5043 *dev)
 {
-    uint8_t x = dev->config->axradio_phy_chanvcoiinit[0];
-    if (x & 0x80)
+    if (dev->config->axradio_phy_vcocalib)
     {
-        if (!(dev->config->axradio_phy_chanpllrnginit[0] & 0xF0)) {
-            x += (dev->axradio_phy_chanpllrng[0] & 0x0F) - (dev->config->axradio_phy_chanpllrnginit[0] & 0x0F);
-            x &= 0x3f;
-            x |= 0x80;
+        uint8_t x = dev->axradio_phy_chanvcoi[0];
+        if (x & 0x80)
+            return x;
+    }
+    {
+        uint8_t x = dev->config->axradio_phy_chanvcoiinit[0];
+        if (x & 0x80)
+        {
+            if (!(dev->config->axradio_phy_chanpllrnginit[0] & 0xF0)) {
+                x += (dev->axradio_phy_chanpllrng[0] & 0x0F) - (dev->config->axradio_phy_chanpllrnginit[0] & 0x0F);
+                x &= 0x3f;
+                x |= 0x80;
+            }
+            return x;
         }
-        return x;
     }
     return SpiReadLongAddressRegister(dev,REG_AX5043_PLLVCOI);
 }
