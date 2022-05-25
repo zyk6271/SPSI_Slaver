@@ -17,7 +17,6 @@ struct ax5043
     struct ax5043_config *config;
     char name[10];
     int ubRssi;
-    uint8_t axradio_power_now;
     uint8_t ubRFState;
     uint8_t TXBuff[64];
     uint8_t TxLen;
@@ -25,6 +24,7 @@ struct ax5043
     uint8_t RxLen;
     uint8_t axradio_phy_chanpllrng[1];
     uint8_t axradio_phy_chanvcoi[1];
+    uint8_t axradio_power_now;
     uint16_t RegValue[126][2];
     uint16_t TXRegValue[6][2];
     uint16_t RXRegValue[6][2];

@@ -68,6 +68,7 @@ void rf_433_send(uint32_t target_id,uint8_t control,uint8_t value)
     uint8_t *buf = rt_malloc(50);
     sprintf((char *)buf,"S{%08ld,%08ld,%02d,%02d}S",target_id,Self_ID,control,value);
     Normal_send(&rf_433,buf,28);
+    rf_433_send_timer_start();
     rt_free(buf);
 }
 void rf_433_Dequeue(void *paramaeter)
@@ -115,6 +116,7 @@ void rf_4068_send(uint32_t target_id,uint8_t control,uint8_t value)
     uint8_t *buf = rt_malloc(50);
     sprintf((char *)buf,"S{%08ld,%08ld,%02d,%02d}S",target_id,Self_ID,control,value);
     Normal_send(&rf_4068,buf,28);
+    rf_4068_send_timer_start();
     rt_free(buf);
 }
 void rf_4068_Dequeue(void *paramaeter)
