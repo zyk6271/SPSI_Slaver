@@ -84,13 +84,14 @@ void long_heart(void)
 }
 void work_callback(void *parameter)
 {
+    uint32_t time;
     rt_pin_mode(RELAY, PIN_MODE_OUTPUT);
     rt_pin_write(RELAY,0);
     while(1)
     {
         if(rt_sem_take(valve_sem,RT_WAITING_FOREVER) == RT_EOK)
         {
-            uint32_t time = 1*60*1000;
+            time = 1*60*1000;
             rt_timer_control(valve_timer, RT_TIMER_CTRL_SET_TIME, &time);
             rt_timer_start(valve_timer);
         }
@@ -101,7 +102,7 @@ void work_init(void)
     valve_sem = rt_sem_create("valve_refresh", 0, RT_IPC_FLAG_FIFO);
     valve_timer = rt_timer_create("valve_timeout", valve_timeout, RT_NULL, 1*60*1000, RT_TIMER_FLAG_ONE_SHOT|RT_TIMER_FLAG_SOFT_TIMER);
     work_t = rt_thread_create("work", work_callback, RT_NULL, 1024, 10, 10);
-    if(work_t!=RT_NULL)
+    if(work_t != RT_NULL)
     {
         rt_thread_startup(work_t);
     }
