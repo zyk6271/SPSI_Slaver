@@ -5,110 +5,231 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-12-22     Rick       the first version
+ * 2023-10-23     Tobby       the first version
  */
 #include <rtthread.h>
-#include <agile_led.h>
+#include <rtdevice.h>
 #include <stdlib.h>
 #include "Pin_Config.h"
+#include "signal_led.h"
 #include "led.h"
 
 #define DBG_TAG "LED"
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 
-static agile_led_t *LED1_G = RT_NULL;
-static agile_led_t *LED1_R = RT_NULL;
-static agile_led_t *LED2_G = RT_NULL;
-static agile_led_t *LED2_R = RT_NULL;
-static agile_led_t *BEEP = RT_NULL;
-/*
-*   该LED组件经修改,模式字符串的首位为关灯延迟时长
-*/
+static uint8_t beep_mode;
+
+rt_thread_t led_thread = RT_NULL;
+
+static led_t *LED1_G = RT_NULL;
+static led_t *LED1_R = RT_NULL;
+static led_t *LED1_B = RT_NULL;
+static led_t *LED2_G = RT_NULL;
+static led_t *LED2_R = RT_NULL;
+static led_t *LED2_B = RT_NULL;
+static led_t *BEEP = RT_NULL;
+static led_t *WARN_BEEP = RT_NULL;
+
+//定义内存操作函数接口
+led_mem_opreation_t led_mem_opreation;
+
+/*************LED1***************/
+static void LED1_G_ON(void *param)
+{
+    ws2812b_green(0, 1);
+}
+
+static void LED1_G_OFF(void *param)
+{
+    ws2812b_green(0, 0);
+}
+
+static void LED1_R_ON(void *param)
+{
+    ws2812b_red(0, 1);
+}
+
+static void LED1_R_OFF(void *param)
+{
+    ws2812b_red(0, 0);
+}
+
+static void LED1_B_ON(void *param)
+{
+    ws2812b_blue(0, 1);
+}
+
+static void LED1_B_OFF(void *param)
+{
+    ws2812b_blue(0, 0);
+}
+
+/*************LED2***************/
+static void LED2_G_ON(void *param)
+{
+    ws2812b_green(1, 1);
+}
+
+static void LED2_G_OFF(void *param)
+{
+    ws2812b_green(1, 0);
+}
+
+static void LED2_R_ON(void *param)
+{
+    ws2812b_red(1, 1);
+}
+
+static void LED2_R_OFF(void *param)
+{
+    ws2812b_red(1, 0);
+}
+
+static void LED2_B_ON(void *param)
+{
+    ws2812b_blue(1, 1);
+}
+
+static void LED2_B_OFF(void *param)
+{
+    ws2812b_blue(1, 0);
+}
+
+static void BEEP_ON(void *param)
+{
+    rt_pin_mode(BUZZER, PIN_MODE_OUTPUT);
+    rt_pin_write(BUZZER, PIN_HIGH);
+}
+
+static void BEEP_OFF(void *param)
+{
+    rt_pin_mode(BUZZER, PIN_MODE_OUTPUT);
+    rt_pin_write(BUZZER, PIN_LOW);
+}
+
+static void led_run(void *parameter)
+{
+    ws2812b_init();
+    while (1)
+    {
+        rt_thread_mdelay(LED_TICK_TIME);
+        led_ticks();
+        RGB_SendArray();
+    }
+}
+
 void led_Init(void)
 {
-    LED1_G = agile_led_create(LED1_G_Pin, PIN_LOW, "0,300,500", -1);
-    LED1_R = agile_led_create(LED1_R_Pin, PIN_LOW, "0,300,500", -1);
-    LED2_G = agile_led_create(LED2_G_Pin, PIN_LOW, "0,100,100", -1);
-    LED2_R = agile_led_create(LED2_R_Pin, PIN_LOW, "0,100,100", -1);
-    BEEP = agile_led_create(BUZZER, PIN_HIGH, "0,300,500", -1);
+    led_mem_opreation.malloc_fn = (void* (*)(size_t)) rt_malloc;
+    led_mem_opreation.free_fn = rt_free;
+    led_set_mem_operation(&led_mem_opreation);
+
+    LED1_G = led_create(LED1_G_ON, LED1_G_OFF, NULL);
+    LED1_R = led_create(LED1_R_ON, LED1_R_OFF, NULL);
+    LED1_B = led_create(LED1_B_ON, LED1_B_OFF, NULL);
+
+    LED2_G = led_create(LED2_G_ON, LED2_G_OFF, NULL);
+    LED2_R = led_create(LED2_R_ON, LED2_R_OFF, NULL);
+    LED2_B = led_create(LED2_B_ON, LED2_B_OFF, NULL);
+
+    BEEP = led_create(BEEP_ON, BEEP_OFF, NULL);
+    WARN_BEEP = led_create(BEEP_ON, BEEP_OFF, NULL);
+
+    led_thread = rt_thread_create("led_thread", led_run, RT_NULL, 512, 15, 10);
+    rt_thread_startup(led_thread);
 }
+
 void led_transmitter_lost(void)
 {
-    agile_led_set_light_mode(LED1_R,"300,100",1);
-    agile_led_off(LED1_G);
-    agile_led_start(LED1_R);
+    led_stop(LED1_G);
+    led_set_mode(LED1_R, LOOP_PERMANENT, "1,0,");
+    led_start(LED1_R);
 }
+
 void led_transmitter_off(void)
 {
-    agile_led_set_light_mode(LED1_R,"300,100",1);
-    agile_led_set_light_mode(LED1_G,"300,100",1);
-    agile_led_start(LED1_G);
-    agile_led_start(LED1_R);
+    led_set_mode(LED1_R,LOOP_PERMANENT,"1,0,");
+    led_set_mode(LED1_G,LOOP_PERMANENT,"1,0,");
+    led_start(LED1_G);
+    led_start(LED1_R);
 }
+
 void led_transmitter_on(void)
 {
-    agile_led_set_light_mode(LED1_G,"300,100",1);
-    agile_led_off(LED1_R);
-    agile_led_start(LED1_G);
+    led_stop(LED1_R);
+    led_set_mode(LED1_G, LOOP_PERMANENT, "1,0,");
+    led_start(LED1_G);
 }
+
+void led_transmitter_blink(void)
+{
+    led_set_mode(LED1_B, 1, "100,100,");
+    led_start(LED1_B);
+}
+
 void led_receiver_lost(void)
 {
-    agile_led_set_light_mode(LED2_R,"300,100",1);
-    agile_led_off(LED2_G);
-    agile_led_start(LED2_R);
+    led_stop(LED2_G);
+    led_set_mode(LED2_R, LOOP_PERMANENT, "1,0,");
+    led_start(LED2_R);
+    led_stop(WARN_BEEP);
 }
+
 void led_receiver_off(void)
 {
-    agile_led_set_light_mode(LED2_R,"300,100",1);
-    agile_led_set_light_mode(LED2_G,"300,100",1);
-    agile_led_start(LED2_G);
-    agile_led_start(LED2_R);
+    led_set_mode(LED2_R,LOOP_PERMANENT,"1,0,");
+    led_set_mode(LED2_G,LOOP_PERMANENT,"1,0,");
+    led_start(LED2_G);
+    led_start(LED2_R);
 }
+
 void led_receiver_on(void)
 {
-    agile_led_set_light_mode(LED2_G,"300,100",1);
-    agile_led_off(LED2_R);
-    agile_led_start(LED2_G);
+    led_stop(LED2_R);
+    led_set_mode(LED2_G, LOOP_PERMANENT, "1,0,");
+    led_start(LED2_G);
+    led_stop(WARN_BEEP);
 }
-void led_transmitter_blink(uint8_t valve)
+
+void led_receiver_warning(void)
 {
-    if(valve)
-    {
-        agile_led_set_light_mode(LED2_G,"100,100,100,100",4);
-        agile_led_off(LED2_G);
-        agile_led_start(LED2_G);
-    }
-    else
-    {
-        agile_led_set_light_mode(LED2_R,"100,100,100,100",4);
-        agile_led_set_light_mode(LED2_G,"100,100,100,100",4);
-        agile_led_off(LED2_R);
-        agile_led_off(LED2_G);
-        agile_led_start(LED2_R);
-        agile_led_start(LED2_G);
-    }
+    led_set_mode(LED2_R, LOOP_PERMANENT,
+            "50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50\
+                                    ,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,2000,");
+    led_set_mode(WARN_BEEP, LOOP_PERMANENT,
+            "50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50\
+                                    ,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,2000,");
+    led_stop(LED2_G);
+    led_start(LED2_R);
+    led_start(WARN_BEEP);
 }
+
+
 void beep_start(uint8_t select)
 {
-    agile_led_stop(BEEP);
-    agile_led_off(BEEP);
-    switch(select)
+    if (select != beep_mode)
     {
-    case 0://10s/1声
-        agile_led_set_light_mode(BEEP,"300,200,10000",-1);
-        break;
-    case 1://5s/2声
-        agile_led_set_light_mode(BEEP,"300,200,200,200,5000",-1);
-        break;
-    case 2://5s/3声
-        agile_led_set_light_mode(BEEP,"300,200,200,200,200,200,5000",-1);
-        break;
+        beep_mode = select;
+        led_stop(BEEP);
+        switch(select)
+        {
+        case 0://10s/1声
+            led_set_mode(BEEP,LOOP_PERMANENT,"200,10000,");
+            break;
+        case 1://5s/2声
+            led_set_mode(BEEP,LOOP_PERMANENT,"200,200,200,5000,");
+            break;
+        case 2://5s/3声
+            led_set_mode(BEEP,LOOP_PERMANENT,"200,200,200,200,200,5000,");
+            break;
+        }
+        led_start(BEEP);
     }
-    agile_led_start(BEEP);
 }
+
 void beep_stop(void)
 {
-    agile_led_stop(BEEP);
-    agile_led_off(BEEP);
+    beep_mode = 0;
+    led_stop(BEEP);
 }

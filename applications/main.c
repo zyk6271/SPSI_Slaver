@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-11-16     RT-Thread    first version
+ * 2023-10-23     RT-Thread    first version
  */
 
 #include <rtthread.h>
-#include <stdint.h>
+#include <stm32wlxx.h>
 
 #define DBG_TAG "main"
 #define DBG_LVL DBG_LOG
@@ -18,10 +18,9 @@
 int main(void)
 {
     led_Init();
-    led_transmitter_off();
-    rf_433_start();
-    rf_4068_start();
-    RadioQueueInit();
+    rf_enqueue_init();
+    rf_lora_init();
+    rf_pipe_init();
     work_init();
     while (1)
     {

@@ -12,18 +12,21 @@
 #define RT_TICK_PER_SECOND 1000
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
+#define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
-#define RT_TIMER_THREAD_STACK_SIZE 512
+#define RT_TIMER_THREAD_STACK_SIZE 2048
 
 /* kservice optimization */
 
+#define RT_KSERVICE_USING_STDLIB
 /* end of kservice optimization */
-#define RT_DEBUG
-#define RT_DEBUG_COLOR
+#define RT_USING_DEBUG
+#define RT_DEBUGING_COLOR
+#define RT_DEBUGING_CONTEXT
 
 /* Inter-Thread communication */
 
@@ -38,6 +41,7 @@
 
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
+#define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
 /* end of Memory Management */
 
@@ -48,10 +52,11 @@
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 /* end of Kernel Device Object */
-#define RT_VER_NUM 0x40004
+#define RT_VER_NUM 0x50002
 /* end of RT-Thread Kernel */
-#define ARCH_ARM
+#define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
+#define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_M4
 
@@ -61,15 +66,8 @@
 #define RT_USING_USER_MAIN
 #define RT_MAIN_THREAD_STACK_SIZE 2048
 #define RT_MAIN_THREAD_PRIORITY 10
-
-/* C++ features */
-
-/* end of C++ features */
-
-/* Command shell */
-
-#define RT_USING_FINSH
 #define RT_USING_MSH
+#define RT_USING_FINSH
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_THREAD_PRIORITY 20
@@ -81,57 +79,55 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
-/* end of Command shell */
+#define FINSH_USING_OPTION_COMPLETION
 
-/* Device virtual file system */
+/* DFS: device virtual file system */
 
-/* end of Device virtual file system */
+/* end of DFS: device virtual file system */
 
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
-#define RT_PIPE_BUFSZ 512
+#define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
-#define RT_USING_MTD_NOR
 #define RT_USING_SPI
-#define RT_USING_WDT
 
 /* Using USB */
 
 /* end of Using USB */
 /* end of Device Drivers */
 
-/* POSIX layer and C standard library */
+/* C/C++ and POSIX layer */
 
-#define RT_LIBC_USING_TIME
-#define RT_LIBC_DEFAULT_TIMEZONE 8
-/* end of POSIX layer and C standard library */
+/* ISO-ANSI C layer */
+
+/* Timezone and Daylight Saving Time */
+
+#define RT_LIBC_USING_LIGHT_TZ_DST
+#define RT_LIBC_TZ_DEFAULT_HOUR 8
+#define RT_LIBC_TZ_DEFAULT_MIN 0
+#define RT_LIBC_TZ_DEFAULT_SEC 0
+/* end of Timezone and Daylight Saving Time */
+/* end of ISO-ANSI C layer */
+
+/* POSIX (Portable Operating System Interface) layer */
+
+
+/* Interprocess Communication (IPC) */
+
+
+/* Socket is in the 'Network' category */
+
+/* end of Interprocess Communication (IPC) */
+/* end of POSIX (Portable Operating System Interface) layer */
+/* end of C/C++ and POSIX layer */
 
 /* Network */
 
-/* Socket abstraction layer */
-
-/* end of Socket abstraction layer */
-
-/* Network interface device */
-
-/* end of Network interface device */
-
-/* light weight TCP/IP stack */
-
-/* end of light weight TCP/IP stack */
-
-/* AT commands */
-
-/* end of AT commands */
 /* end of Network */
-
-/* VBUS(Virtual Software BUS) */
-
-/* end of VBUS(Virtual Software BUS) */
 
 /* Utilities */
 
@@ -152,6 +148,10 @@
 /* Wiced WiFi */
 
 /* end of Wiced WiFi */
+
+/* CYW43012 WiFi */
+
+/* end of CYW43012 WiFi */
 /* end of Wi-Fi */
 
 /* IoT Cloud */
@@ -165,10 +165,24 @@
 
 /* language packages */
 
+/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
+
+/* end of JSON: JavaScript Object Notation, a lightweight data-interchange format */
+
+/* XML: Extensible Markup Language */
+
+/* end of XML: Extensible Markup Language */
 /* end of language packages */
 
 /* multimedia packages */
 
+/* LVGL: powerful and easy-to-use embedded GUI library */
+
+/* end of LVGL: powerful and easy-to-use embedded GUI library */
+
+/* u8g2: a monochrome graphic library */
+
+/* end of u8g2: a monochrome graphic library */
 /* end of multimedia packages */
 
 /* tools packages */
@@ -177,18 +191,17 @@
 
 /* system packages */
 
-#define PKG_USING_SYSWATCH
-#define SYSWATCH_EXCEPT_RESOLVE_MODE_2
-#define SYSWATCH_EXCEPT_RESOLVE_MODE 2
-#define SYSWATCH_EXCEPT_TIMEOUT 60
-#define SYSWATCH_EXCEPT_CONFIRM_TMO 15
-#define SYSWATCH_EXCEPT_RESUME_DLY 15
-#define SYSWATCH_THREAD_PRIO 0
-#define SYSWATCH_THREAD_STK_SIZE 512
-#define SYSWATCH_THREAD_NAME "syswatch"
-#define SYSWATCH_WDT_NAME "wdt"
-#define SYSWATCH_WDT_TIMEOUT 5
-#define PKG_USING_SYSWATCH_LATEST_VERSION
+/* enhanced kernel services */
+
+/* end of enhanced kernel services */
+
+/* acceleration: Assembly language or algorithmic acceleration packages */
+
+/* end of acceleration: Assembly language or algorithmic acceleration packages */
+
+/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
+
+/* end of CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
@@ -197,27 +210,92 @@
 
 /* peripheral libraries and drivers */
 
-#define PKG_USING_AGILE_LED
-#define PKG_AGILE_LED_THREAD_STACK_SIZE 1024
-#define PKG_AGILE_LED_THREAD_PRIORITY 15
-#define PKG_USING_AGILE_LED_LATEST_VERSION
+/* sensors drivers */
+
+/* end of sensors drivers */
+
+/* touch drivers */
+
+/* end of touch drivers */
+#define PKG_USING_SIGNAL_LED
+#define PKG_USING_SIGNAL_LED_V130
+
+/* signalLed Options */
+
+/* end of signalLed Options */
+
+/* Kendryte SDK */
+
+/* end of Kendryte SDK */
 /* end of peripheral libraries and drivers */
 
 /* AI packages */
 
 /* end of AI packages */
 
+/* Signal Processing and Control Algorithm Packages */
+
+/* end of Signal Processing and Control Algorithm Packages */
+
 /* miscellaneous packages */
 
+/* project laboratory */
+
+/* end of project laboratory */
 
 /* samples: kernel and components samples */
 
 /* end of samples: kernel and components samples */
 
-/* games: games run on RT-Thread console */
+/* entertainment: terminal games and other interesting software packages */
 
-/* end of games: games run on RT-Thread console */
+/* end of entertainment: terminal games and other interesting software packages */
 /* end of miscellaneous packages */
+
+/* Arduino libraries */
+
+
+/* Projects and Demos */
+
+/* end of Projects and Demos */
+
+/* Sensors */
+
+/* end of Sensors */
+
+/* Display */
+
+/* end of Display */
+
+/* Timing */
+
+/* end of Timing */
+
+/* Data Processing */
+
+/* end of Data Processing */
+
+/* Data Storage */
+
+/* Communication */
+
+/* end of Communication */
+
+/* Device Control */
+
+/* end of Device Control */
+
+/* Other */
+
+/* end of Other */
+
+/* Signal IO */
+
+/* end of Signal IO */
+
+/* Uncategorized */
+
+/* end of Arduino libraries */
 /* end of RT-Thread online packages */
 
 /* samples: kernel and components samples */
